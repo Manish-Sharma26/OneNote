@@ -1,6 +1,14 @@
 import NoteContext from "./NoteContext";
 import { useState } from "react";
 const NoteState=(props)=>{
+  const [alert, setalert] = useState(null);
+
+  const alertMessage = (message, type) => {
+    setalert({ message: message, type: type });
+    setTimeout(() => {
+      setalert(null);
+    }, 2000);
+  };
   const noteInitial=[
     {
       "_id": "64d0e797cbceedefdbcf5c86",
@@ -68,8 +76,32 @@ const NoteState=(props)=>{
 
   ]
   const [Notes, setNotes] = useState(noteInitial);
+
+  //Add a note
+  const addNote=(title,description,tag)=>{
+    const newNote = {
+      "_id": "64d221e3be7d0617b6d5004b",
+      "user": "64d0bfc3120f3218fa7a05d8",
+      "title": title,
+      "description": description,
+      "tag": tag,
+      "date": "2023-08-08T11:07:15.267Z",
+      "__v": 0
+    };
+    Notes.unshift(newNote)
+    setNotes(Notes);
+  }
+  //Delete a note
+  const deleteNote=()=>{
+
+  }
+  //Update a note
+  const updateNote=()=>{
+    
+  }
+
   return(
-  <NoteContext.Provider value={{Notes,setNotes}}>
+  <NoteContext.Provider value={{Notes,addNote,deleteNote,updateNote,alert,alertMessage,setalert}}>
     {
     props.children}
   </NoteContext.Provider>

@@ -3,9 +3,9 @@ import React from "react";
 const NoteItem = (props) => {
   const { note } = props;
   return (
-    <div className="col-md-4 my-3">
+    <div className=" col-md-4 col-lg-3 col-sm-6 col-xl-3 my-2 " style={{minWidth:'200px',maxWidth:'300px'}}>
       
-      <div className="card">
+      <div className="card gradient-background" style={{ height:"200px",position:'relative'}}>
         
         <div className=" card-header d-flex justify-content-end align-items-center">
             <div className=" flex-grow-1">{note.title} </div>
