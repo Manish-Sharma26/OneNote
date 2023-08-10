@@ -2,106 +2,82 @@ import NoteContext from "./NoteContext";
 import { useState } from "react";
 const NoteState=(props)=>{
   const [alert, setalert] = useState(null);
-
+  const host ='http://localhost:5000'
   const alertMessage = (message, type) => {
     setalert({ message: message, type: type });
     setTimeout(() => {
       setalert(null);
     }, 2000);
   };
-  const noteInitial=[
-    {
-      "_id": "64d0e797cbceedefdbcf5c86",
-      "user": "64d0bfc3120f3218fa7a05d8",
-      "title": "Heloo",
-      "description": "How are you1",
-      "tag": "Study",
-      "date": "2023-08-07T12:46:15.371Z",
-      "__v": 0
-    },
-    {
-      "_id": "64d221e3be7d0617b6d5004b",
-      "user": "64d0bfc3120f3218fa7a05d8",
-      "title": "React",
-      "description": "Js library",
-      "tag": "youtube",
-      "date": "2023-08-08T11:07:15.267Z",
-      "__v": 0
-    },
-    {
-      "_id": "64d221ffbe7d0617b6d5004d",
-      "user": "64d0bfc3120f3218fa7a05d8",
-      "title": "Pythin",
-      "description": "Data Analysis ",
-      "tag": "Core",
-      "date": "2023-08-08T11:07:43.334Z",
-      "__v": 0
-    },
-    {
-      "_id": "64d221e3be7d0617b6d5004b",
-      "user": "64d0bfc3120f3218fa7a05d8",
-      "title": "Data Structures",
-      "description": "Linked list , graphs and trees",
-      "tag": "CheatSheet",
-      "date": "2023-08-08T11:07:15.267Z",
-      "__v": 0
-    },
-    {
-      "_id": "64d221e3be7d0617b6d5004b",
-      "user": "64d0bfc3120f3218fa7a05d8",
-      "title": "Internt technology",
-      "description": "Networking,protocols,routing",
-      "tag": "Core",
-      "date": "2023-08-08T11:07:15.267Z",
-      "__v": 0
-    },
-    {
-      "_id": "64d221e3be7d0617b6d5004b",
-      "user": "64d0bfc3120f3218fa7a05d8",
-      "title": "Theory of Computation",
-      "description": "Alphbet,prolog,lambda",
-      "tag": "Core",
-      "date": "2023-08-08T11:07:15.267Z",
-      "__v": 0
-    },
-    {
-      "_id": "64d221e3be7d0617b6d5004b",
-      "user": "64d0bfc3120f3218fa7a05d8",
-      "title": "Image processing",
-      "description": "IMage .png , .gif,.jpeg",
-      "tag": "DSE",
-      "date": "2023-08-08T11:07:15.267Z",
-      "__v": 0
-    }
-
-  ]
+  const noteInitial=[]; 
   const [Notes, setNotes] = useState(noteInitial);
-
+  //get all the notes
+  const getNotes = async()=>{
+    const response =await fetch(`${host}/api/notes`,{
+      method:'GET',
+      headers:{
+        "auth-token": 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjRkMGJmYzMxMjBmMzIxOGZhN2EwNWQ4In0sImlhdCI6MTY5MTQwOTc5MH0.AGFIPR3Tj444JzQ-WKSHqfsl5OY1NCB9-ollEMYCNgk'
+      }
+    });
+    const json = await response.json()
+    // console.log(json);
+    setNotes(json);
+  }
   //Add a note
-  const addNote=(title,description,tag)=>{
-    const newNote = {
-      "_id": "64d221e3be7d0617b6d5004b",
-      "user": "64d0bfc3120f3218fa7a05d8",
-      "title": title,
-      "description": description,
-      "tag": tag,
-      "date": "2023-08-08T11:07:15.267Z",
-      "__v": 0
-    };
-    Notes.unshift(newNote)
-    setNotes(Notes);
+  const addNote=async(title,description,tag)=>{
+    const response =await fetch(`${host}/api/notes/createnotes`,{
+      method:'POST',
+      headers:{
+        "Content-Type":"application/json",
+        "auth-token": 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjRkMGJmYzMxMjBmMzIxOGZhN2EwNWQ4In0sImlhdCI6MTY5MTQwOTc5MH0.AGFIPR3Tj444JzQ-WKSHqfsl5OY1NCB9-ollEMYCNgk'
+      },
+      body:JSON.stringify({title,description,tag})
+    });
+    const json = await response.json();
+    setNotes(Notes.concat(json));
   }
   //Delete a note
-  const deleteNote=()=>{
-
+  const deleteNote=async (id)=>{
+    //Api Call
+    const response =await fetch(`${host}/api/notes/deletenote/${id}`,{
+      method:'DELETE',
+      headers:{
+        "auth-token": 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjRkMGJmYzMxMjBmMzIxOGZhN2EwNWQ4In0sImlhdCI6MTY5MTQwOTc5MH0.AGFIPR3Tj444JzQ-WKSHqfsl5OY1NCB9-ollEMYCNgk'
+      },
+    });
+    // const json=  await response.json();
+    // console.log(json);
+    const newNote= Notes.filter((note)=>{return note._id !== id});
+    setNotes(newNote);
   }
   //Update a note
-  const updateNote=()=>{
-    
+  const editNote= async(id,title,description,tag)=>{
+   
+    const response = await fetch(`${host}/api/notes/updatenote/${id}`,{
+      method:'PUT',
+      headers:{
+        "Content-Type":"application/json",
+        "auth-token": 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjRkMGJmYzMxMjBmMzIxOGZhN2EwNWQ4In0sImlhdCI6MTY5MTQwOTc5MH0.AGFIPR3Tj444JzQ-WKSHqfsl5OY1NCB9-ollEMYCNgk'
+      },
+      body:JSON.stringify({title,description,tag})
+    });
+
+    let newNotes = JSON.parse(JSON.stringify(Notes));
+    for(let index=0;index < Notes.length ;index++){
+      const currNOte  = Notes[index];
+      if(currNOte._id ===id){
+
+        newNotes[index].title = title;
+        newNotes[index].description = description;
+        newNotes[index].tag = tag;
+        break;
+      }
+    }
+    setNotes(newNotes);
   }
 
   return(
-  <NoteContext.Provider value={{Notes,addNote,deleteNote,updateNote,alert,alertMessage,setalert}}>
+  <NoteContext.Provider value={{Notes,getNotes,addNote,deleteNote,editNote,alert,alertMessage,setalert}}>
     {
     props.children}
   </NoteContext.Provider>

@@ -4,10 +4,15 @@ const AddNote = (props) => {
   const context = useContext(NoteContext);
   const {addNote}=context;
   const [note, setNote] = useState({title:"",description:"",tag:""});
+
   const handleClick=(e)=>{
     e.preventDefault();
     if(note.title.length === 0){
       props.showAlert("Title is required ","warning");
+      document.querySelector('#title').focus();
+    }
+    else if(note.title.length < 5){
+      props.showAlert("Title should contain atleast 5 characters ","warning");
       document.querySelector('#title').focus();
     }
     else if(note.description.length === 0){
@@ -40,6 +45,7 @@ const AddNote = (props) => {
               className="form-control"
               id="title"
               name="title"
+              minLength={5}
               onChange={onChange}
             />
           </div>
@@ -50,6 +56,7 @@ const AddNote = (props) => {
             <input
               type="text"
               className="form-control"
+              minLength={5}
               id="description"
               name="description"
               onChange={onChange}
@@ -67,8 +74,8 @@ const AddNote = (props) => {
               onChange={onChange}
             />
           </div>
-          <button type="submit" className="btn btn-primary" onClick={handleClick}>
-            Submit
+          <button  type="submit" className="btn btn-primary" onClick={handleClick}>
+            Add Note
           </button>
         </form>
       </div>
