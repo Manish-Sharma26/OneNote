@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 const fetch = require('../middleware/fetch');
 //using vaildator to validate the fields
 const JWT_SECRET = "Manish$master";
+let success =false;
 
 //Route 1: Creating user
 router.post(
@@ -25,11 +26,12 @@ router.post(
     if (!result.isEmpty()) {
       // const user = User(req.body);
       // user.save();
-      return res.send({ errors: result.array() });
+      success=false;
+      return res.send({success, errors: result.array() });
     }
     let user = await User.findOne({ email: req.body.email });
-    if (user) {
-      return res.status(400).json({ error: "user already exists" });
+    if (user) {success=false;
+      return res.status(400).json({ success,error: "user already exists" });
     }
     try {
       const salt = await bcrypt.genSalt(10);
@@ -45,7 +47,8 @@ router.post(
         },
       };
       const authToken = jwt.sign(data, JWT_SECRET);
-      res.json({ authToken });
+      success=true;
+      res.json({success, authToken });
       // return res.json(user);
     } catch (err) {
       console.error(err.message);
@@ -66,18 +69,20 @@ router.post(
     if (!result.isEmpty()) {
       // const user = User(req.body);
       // user.save();
-      return res.send({ errors: result.array() });
+      return res.send({errors: result.array() });
     }
     const { email, pass } = req.body;
     try {
       let user = await User.findOne({ email });
       if (!user) {
-        return res.status(400).json({ error: "Incorrect credentials" });
+        success=false;
+        return res.status(400).json({success, error: "Incorrect credentials" });
       }
 
       const comparePass = await bcrypt.compare(pass, user.pass);
       if (!comparePass) {
-        return res.status(400).json({ error: "Incorrect credentials" });
+        success=false;
+        return res.status(400).json({success, error: "Incorrect credentials" });
       }
       const payload = {
         user: {
@@ -85,7 +90,8 @@ router.post(
         },
       };
       const authToken = jwt.sign(payload, JWT_SECRET);
-      res.json({ authToken });
+      success=true;
+      res.json({ success,authToken });
     } catch (error) {
       console.error(error.message);
       res.status(500).json({ error: "Internal Server error occureed" });

@@ -3,17 +3,22 @@ import NoteContext from "../context/notes/NoteContext";
 import NoteItem from "./NoteItem";
 import AddNote from "./AddNote";
 import Alert from "./Alert";
+import {useNavigate} from "react-router-dom"
 
 const Notes = () => {
   const context = useContext(NoteContext);
   const { Notes, alert, alertMessage, getNotes,editNote } = context;
   const [note, setNote] = useState({id:"",edittitle:"",editdescription:"",edittag:""});
-
+  const navigate = useNavigate();
   const ref = useRef(null);
   const refClose = useRef(null);
   useEffect(() => {
-    
+    if(localStorage.getItem('token'))
     getNotes();
+    else{
+      navigate('/login');
+    }
+
   }, []);
 
   let num = 1;
@@ -44,6 +49,7 @@ const Notes = () => {
   
   return (
     <>
+    <Alert alert={alert} />
       <button
         ref={ref}
         type="button"
@@ -131,19 +137,20 @@ const Notes = () => {
         </div>
       </div>
       {/* ----------------------------------- */}
-      <div className="row my-3 d-flex justify-content-evenly">
+      <div className="container">
+      <div className=" row my-3 d-flex justify-content-evenly">
         <div className="d-flex justify-content-between">
-          <h3>Your Notes</h3>
+          <h3 className="mx-1">Your Notes</h3>
           <button
             type="button"
-            className="btn btn-outline-primary btn-sm"
+            className="btn btn-outline-primary btn-sm mx-3"
             onClick={handleShowClick}
           >
             Add New Note
           </button>
           {/* <button type="button" className="btn btn-primary" >Add Note</button> */}
         </div>
-        <Alert alert={alert} />
+        
         {showAdd ? (
           <AddNote setshowAdd={setshowAdd} showAlert={alertMessage} />
         ) : (
@@ -152,6 +159,7 @@ const Notes = () => {
         {Notes.map((note) => {
           return <NoteItem updateNote={updateNote} note={note} key={num++} />;
         })}
+      </div>
       </div>
     </>
   );

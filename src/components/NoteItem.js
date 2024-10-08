@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import NoteContext from "../context/notes/NoteContext";
 const NoteItem = (props) => {
   const context = useContext(NoteContext);
-  const { deleteNote } = context;
+  const { deleteNote,alertMessage } = context;
   const { note,updateNote } = props;
   return (
     <div
@@ -44,6 +44,7 @@ const NoteItem = (props) => {
                 title="Delete Note"
                 onClick={() => {
                   deleteNote(note._id);
+                  alertMessage("Note Deleted Successfully","success");
                 }}
               ></i>
               {/* <i className="fa-solid fa-circle-xmark" title="Delete Note"></i> */}

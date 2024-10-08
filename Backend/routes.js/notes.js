@@ -3,6 +3,8 @@ const router = express.Router();
 const fetch = require("../middleware/fetch");
 const Note = require("../models/Note");
 const { body, validationResult } = require("express-validator");
+
+let success = false;
 //Route1 : Get all the notes login required
 router.get("/", fetch, async (req, res) => {
   const notes = await Note.find({ user: req.user.id });
